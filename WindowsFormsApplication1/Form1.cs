@@ -15,7 +15,10 @@ namespace WordRedevelop
     public partial class Form1 : Form
     {
 
-        object saveFile;
+        public static object saveDir;
+        public static object fileName;
+        public static object saveFile;
+        public static bool isCoverted = false;
 
         public Form1()
         {
@@ -26,12 +29,16 @@ namespace WordRedevelop
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            Form3 form = new Form3();
+            form.ShowDialog();
+            form.Close();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ExchangeText();
+            Form2 form = new Form2();
+            form.ShowDialog();
+
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -39,73 +46,34 @@ namespace WordRedevelop
             CovertWord();
         }
 
-        /// <summary>
-        /// 替换文本
-        /// </summary>
-        private void ExchangeText()
+        private void button5_Click(object sender, EventArgs e)
         {
-            Microsoft.Office.Interop.Word.Application app = null;
-            Document doc = null;
-
-            try
-            {
-                object missing = System.Reflection.Missing.Value;
-                object fileName = @"C:\Users\DELL\Desktop\松轩可研说明-输变电工程.docx";
-                saveFile = @"C:\Users\DELL\Desktop\松轩可研说明-输变电工程（修改）.docx";
-                app = new Microsoft.Office.Interop.Word.Application();
-                doc = app.Documents.Open(ref fileName, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing);
-
-                Dictionary<string, string> datas = new Dictionary<string, string>();
-                datas.Add("上海金山松轩110kV输变电工程", "哈哈哈哈哈");
-
-                object replace = WdReplace.wdReplaceAll;
-                foreach (var item in datas)
-                {
-                    app.Selection.Find.Replacement.ClearFormatting();
-                    app.Selection.Find.ClearFormatting();
-                    app.Selection.Find.Text = item.Key;
-                    app.Selection.Find.Replacement.Text = item.Value;
-
-                    app.Selection.Find.Execute(
-                    ref missing, ref missing,
-                    ref missing, ref missing,
-                    ref missing, ref missing,
-                    ref missing, ref missing, ref missing,
-                    ref missing, ref replace,
-                    ref missing, ref missing,
-                    ref missing, ref missing);
-                }
-
-                doc.SaveAs2(saveFile, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing, missing);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
-            finally
-            {
-                if (doc != null)
-                    doc.Close();
-                if (app != null)
-                    app.Quit();
-                MessageBox.Show("替换成功！");
-            }
-
+            MergeWord();
         }
 
+
         /// <summary>
-        /// 拆分word
+        /// 依据书签位置拆分word
         /// </summary>
-        private void CovertWord()
+        public void CovertWord()
         {
             object missing = System.Reflection.Missing.Value;
 
             try
             {
-                string path = @"C:\Users\DELL\Desktop\split";
-                //Directory.CreateDirectory(path);
+                if(saveFile == null){
+                    MessageBox.Show("请先替换文本！");
+                    return;
+                }
+                //string path = @"C:\Users\DELL\Desktop\split";
+                string path = (string)saveDir;
 
-                //Document doc = ReadDocument(@"C:\Users\DELL\Desktop\示例word.doc");
+                /**
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+                System.IO.Directory.CreateDirectory(path);
+                */
+
                 Document doc = ReadDocument((string)saveFile);
                       
 
@@ -114,9 +82,9 @@ namespace WordRedevelop
 
                 object oStart = doc.Content.Start;
                 object oEnd = 0;
-                for (int i = 0; i < doc.Bookmarks.Count; i++)
+                for (int i = 0; i <= doc.Bookmarks.Count; i++)
                 {
-                    if (i != doc.Bookmarks.Count-1)
+                    if (i != doc.Bookmarks.Count)
                     {
                         oEnd = positions[i, 0];
                     }
@@ -125,13 +93,22 @@ namespace WordRedevelop
                         oEnd = doc.Content.End;
                     }
 
+                    object filename = null;
+                    if (i != 0)
+                    {
+                        string newfile = doc.Bookmarks.get_Item(i).Name;
+                        filename = path + @"\" + newfile + ".docx";
+                    }
+                    else
+                        filename = path + @"\" + "b0" + ".docx";
+                    
+
                     Range tocopy = doc.Range(ref oStart, ref oEnd);
                     tocopy.Copy();
 
                     Document docto = CreateDocument();
                     docto.Content.PasteAndFormat(WdRecoveryType.wdFormatOriginalFormatting);
 
-                    object filename = path + @"\" + "test" + i.ToString() + ".docx";
                     object format = WdSaveFormat.wdFormatDocumentDefault; 
                     docto.SaveAs(ref filename, ref format, ref missing, ref missing, ref missing,
                         ref missing, ref missing, ref missing, ref missing, ref missing, ref missing,
@@ -140,6 +117,8 @@ namespace WordRedevelop
 
                     oStart = oEnd;
                 }
+                MessageBox.Show("拆分成功!");
+                isCoverted = true;
             }
             catch (Exception e)
             {
@@ -148,7 +127,6 @@ namespace WordRedevelop
             finally
             {
                 word.Quit(ref missing, ref missing, ref missing);
-                MessageBox.Show("拆分成功!");
             }
 
 
@@ -159,6 +137,54 @@ namespace WordRedevelop
         /// </summary>
         private void MergeWord()
         {
+            ApplicationClass appClass = null;
+            Document doc = null;
+            try
+            {
+                if (isCoverted == false)
+                {
+                    MessageBox.Show("未分割文件！");
+                    return;
+                }
+                object missing = System.Reflection.Missing.Value;
+                appClass = new ApplicationClass();
+                object fileName = (string)saveDir + "\\output.docx";
+                doc = appClass.Documents.Add(ref missing,ref missing,ref missing,ref missing);
+                doc.Activate();
+
+                string addFolder = (string)saveDir;
+                string[] files = System.IO.Directory.GetFiles(addFolder,"*.docx");
+
+                object confirmConversion = false;
+                object attachment = false;
+                object link = false;
+                object pBreak = (int)Microsoft.Office.Interop.Word.WdBreakType.wdSectionBreakNextPage;
+                foreach (string s in files)
+                {
+                    if (s != saveFile)
+                    {
+                        appClass.Selection.InsertFile(s, ref missing, confirmConversion, link, attachment);
+                        appClass.Selection.InsertBreak(ref pBreak);
+                    }
+                }
+                if(System.IO.File.Exists((string)fileName))
+                    System.IO.File.Delete((string)fileName);
+                doc.SaveAs2(ref fileName,missing,missing,missing,missing,missing,missing,missing,missing,missing,missing,missing,missing,missing
+                    ,missing,missing,missing);
+                MessageBox.Show("合并成功！");
+                isCoverted = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                if (doc != null)
+                    doc.Close();
+                if (appClass != null)
+                    appClass.Quit();
+            }
 
         }
 
@@ -200,7 +226,6 @@ namespace WordRedevelop
         /// <returns></returns>
         private int[,] GetPosition(Document word)
         {
-            
             int bmcount = word.Bookmarks.Count;
             int[,] result = new int[bmcount, 2];
             for (int i = 1; i <= bmcount; i++)
@@ -214,6 +239,7 @@ namespace WordRedevelop
             return result;
         }
         #endregion
+
 
 
     }

@@ -30,13 +30,14 @@
         {
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(74, 92);
+            this.button3.Location = new System.Drawing.Point(98, 61);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.Size = new System.Drawing.Size(96, 26);
             this.button3.TabIndex = 0;
             this.button3.Text = "文本替换";
             this.button3.UseVisualStyleBackColor = true;
@@ -44,17 +45,28 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(74, 149);
+            this.button4.Location = new System.Drawing.Point(98, 118);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.Size = new System.Drawing.Size(96, 28);
             this.button4.TabIndex = 1;
             this.button4.Text = "word拆分";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(98, 174);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(96, 26);
+            this.button5.TabIndex = 2;
+            this.button5.Text = "合并拆分文档";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form1
             // 
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Name = "Form1";
@@ -69,6 +81,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
     }
 }
 

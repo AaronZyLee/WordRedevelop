@@ -12,3 +12,5 @@ C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debu
 C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WordRedevelop.csproj.GenerateResource.Cache
 C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WordRedevelop.exe
 C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WordRedevelop.pdb
+C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WordRedevelop.Form2.resources
+C:\Users\DELL\Desktop\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WordRedevelop.Form3.resources
