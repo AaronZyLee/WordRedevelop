@@ -105,7 +105,6 @@ namespace WordRedevelop
 
                     Range tocopy = doc.Range(ref oStart, ref oEnd);
                     tocopy.Copy();
-
                     Document docto = CreateDocument();
                     docto.Content.PasteAndFormat(WdRecoveryType.wdFormatOriginalFormatting);
 
@@ -215,7 +214,6 @@ namespace WordRedevelop
             Type docsType = docs.GetType();
             object objDocName = path;
             Document doc = (Document)docsType.InvokeMember("Open", System.Reflection.BindingFlags.InvokeMethod, null, docs, new Object[] { objDocName, true, true });
-
             return doc;
         }
 
